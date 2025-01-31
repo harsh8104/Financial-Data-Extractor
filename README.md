@@ -82,7 +82,6 @@ FAISS
 pypdfium2
 Pillow
 langchain_groq
-tempfile
 ```
 
 If any dependency is missing, install it manually using:

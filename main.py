@@ -92,7 +92,7 @@ def get_conversion_chain(vectorstore):
         return None
     chat = ChatGroq(
         temperature=0.7,
-        groq_api_key="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",
+        groq_api_key="GROQ_API_KEY",
         model_name="llama-3.3-70b-versatile"
     )
     memory = ConversationBufferMemory(

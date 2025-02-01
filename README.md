@@ -97,7 +97,9 @@ pip install <package_name>
 - If PDFs fail to process, check their content type and size.
 
 ### Flowchart
+
 ![Alt text](https://res.cloudinary.com/db99r7ugz/image/upload/v1738390149/1_owqxx7.jpg)
+![Alt text](https://res.cloudinary.com/db99r7ugz/image/upload/v1738390375/2_grfdjt.jpg)
 
 ### Contribution
 

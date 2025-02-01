@@ -17,6 +17,8 @@ from io import BytesIO
 from langchain.chat_models import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
+# from langchain.embeddings import HuggingFaceEmbeddings
+
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Windows
 
@@ -89,7 +91,7 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversion_chain(vectorstore):
-    chat = ChatGroq(temperature=0.7, groq_api_key="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", model_name="llama-3.3-70b-versatile")
+    chat = ChatGroq(temperature=0.7, groq_api_key="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", model_name="llama-3.3-70b-versatile")
 
     memory = ConversationBufferMemory(
         memory_key='chat_history',

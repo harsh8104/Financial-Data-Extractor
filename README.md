@@ -96,7 +96,8 @@ pip install <package_name>
 - If API keys are invalid, verify them in `.env`.
 - If PDFs fail to process, check their content type and size.
 
-![Alt text](https://res.cloudinary.com/db99r7ugz/image/upload/v1722530561/logo_ijofdh.png)
+### Flowchart
+![Alt text](https://res.cloudinary.com/db99r7ugz/image/upload/v1738390149/1_owqxx7.jpg)
 
 ### Contribution
 

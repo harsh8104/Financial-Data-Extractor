@@ -24,8 +24,12 @@ POPPLER_PATH = r'C:\Program Files\poppler-24.08.0\Library\bin'
 
 load_dotenv()
 os.getenv("GOOGLE_API_KEY")
+
+# Define emojis/icons for user and document assistant
+user_icon = "👤"  # Emoji for user
+doc_icon = "📄"   # Emoji for document assistant
+
 def convert_pdf_to_images(file_path, scale=300/72):
-    
     pdf_file = pdfium.PdfDocument(file_path)  
     page_indices = [i for i in range(len(pdf_file))]
     
@@ -38,7 +42,6 @@ def convert_pdf_to_images(file_path, scale=300/72):
     list_final_images = [] 
     
     for i, image in zip(page_indices, renderer):
-        
         image_byte_array = BytesIO()
         image.save(image_byte_array, format='jpeg', optimize=True)
         image_byte_array = image_byte_array.getvalue()
@@ -60,7 +63,6 @@ def convert_images_to_text(images):
             extracted_text += text + "\n\n"
     
     return extracted_text
-
 
 def get_pdf_text(pdf_docs):
     text = ""
@@ -103,15 +105,14 @@ def get_conversion_chain(vectorstore):
     return conversation_chain
 
 def handle_user_input(user_question):
-        response = st.session_state.conversation({'question': user_question})
-        st.session_state.chat_history = response['chat_history']
-        
-        for i,message in enumerate(st.session_state.chat_history):
-            if i % 2 == 0:
-                st.write(f"User: {message.content}")
-            else:
-                st.write(f"DocuChat: {message.content}")
+    response = st.session_state.conversation({'question': user_question})
+    st.session_state.chat_history = response['chat_history']
     
+    for i, message in enumerate(st.session_state.chat_history):
+        if i % 2 == 0:
+            st.markdown(f"{user_icon} **User:** {message.content}")
+        else:
+            st.markdown(f"{doc_icon} **DocuChat:** {message.content}")
 
 def main():
     load_dotenv()
@@ -128,48 +129,43 @@ def main():
     if user_question:
         handle_user_input(user_question)
         
-    
     with st.sidebar:
-      st.subheader("Your Documents")
-      pdf_docs = st.file_uploader(
-        "Upload PDF/DOCX files and click Process",
-        accept_multiple_files=True
-      )
+        st.subheader("Your Documents")
+        pdf_docs = st.file_uploader(
+            "Upload PDF/DOCX files and click Process",
+            accept_multiple_files=True
+        )
     
-      if st.button("Process"):
-        with st.spinner("Processing documents..."):
-            if pdf_docs:
-                images = []
-                raw_text = ""
+        if st.button("Process"):
+            with st.spinner("Processing documents..."):
+                if pdf_docs:
+                    images = []
+                    raw_text = ""
 
-                for pdf in pdf_docs:
-                    pdf_bytes = pdf.read()  # Read the uploaded file as bytes
-                    pdf_io = BytesIO(pdf_bytes)  # Convert bytes to file-like object
+                    for pdf in pdf_docs:
+                        pdf_bytes = pdf.read()  # Read the uploaded file as bytes
+                        pdf_io = BytesIO(pdf_bytes)  # Convert bytes to file-like object
+                        
+                        # Convert PDF to images
+                        images.extend(convert_pdf_to_images(pdf_io))  
+
+                        # Extract text from PDF
+                        raw_text += get_pdf_text([pdf_io])  # Pass as a list
                     
-                    # Convert PDF to images
-                    images.extend(convert_pdf_to_images(pdf_io))  
+                    # Extract text from images
+                    image_text = convert_images_to_text(images)
+                    
+                    # Combine extracted text
+                    final_text = raw_text + "\n" + image_text
 
-                    # Extract text from PDF
-                    raw_text += get_pdf_text([pdf_io])  # Pass as a list
-                
-                # Extract text from images
-                image_text = convert_images_to_text(images)
-                
-                # Combine extracted text
-                final_text = raw_text + "\n" + image_text
+                    # Split text into chunks
+                    text_chunks = get_chunks(final_text)
 
-                # Split text into chunks
-                text_chunks = get_chunks(final_text)
+                    # Create vector store
+                    vectorstore = get_vectorstore(text_chunks)
 
-                # Create vector store
-                vectorstore = get_vectorstore(text_chunks)
-
-                # Store the conversation chain in session state
-                st.session_state.conversation = get_conversion_chain(vectorstore)
-
-    
-             
-                
+                    # Store the conversation chain in session state
+                    st.session_state.conversation = get_conversion_chain(vectorstore)
 
 if __name__ == "__main__":
     main()

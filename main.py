@@ -121,7 +121,7 @@ def main():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
         
-    st.header("DocuChat - Open Source Document Assistant")
+    st.header("DocuChat - Assistant")
     
     user_question = st.text_input("Ask questions about your documents:")
     if user_question:

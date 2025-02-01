@@ -1,0 +1,10 @@
+streamlit
+pytesseract
+python-dotenv
+PyPDF2
+langchain
+langchain_google_genai
+faiss-cpu
+pypdfium2
+Pillow
+langchain_groq

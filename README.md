@@ -101,6 +101,10 @@ pip install <package_name>
 ![Alt text](https://res.cloudinary.com/db99r7ugz/image/upload/v1738390149/1_owqxx7.jpg)
 ![Alt text](https://res.cloudinary.com/db99r7ugz/image/upload/v1738390375/2_grfdjt.jpg)
 
+### Output
+
+![Alt text](https://res.cloudinary.com/db99r7ugz/image/upload/v1738390551/WhatsApp_Image_2025-02-01_at_11.45.36_556ed7c8_hs8r7m.jpg)
+
 ### Contribution
 
 Feel free to reach out to us if you have any questions or suggestions.

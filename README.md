@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-Ensure you have the following installed on your machine:
+Ensure you have the following installed on your machine : 
 
 - Python (>= 3.8)
 - pip (latest version)

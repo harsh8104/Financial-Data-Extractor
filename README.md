@@ -1,4 +1,4 @@
-# DocuChat - Open Source Document Assistant
+# DocuChat 
 
 ## Project Setup Guide
 

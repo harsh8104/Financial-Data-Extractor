@@ -96,6 +96,8 @@ pip install <package_name>
 - If API keys are invalid, verify them in `.env`.
 - If PDFs fail to process, check their content type and size.
 
+![Alt text](C:\Users\HARSH JIVANI\OneDrive\Desktop\ChatPDF\2.jpg "Title")
+
 ### Contribution
 
 Feel free to reach out to us if you have any questions or suggestions.

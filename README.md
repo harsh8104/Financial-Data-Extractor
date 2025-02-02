@@ -1,10 +1,10 @@
-# DocuChat - Open Source Document Assistant
+# DocuChat 
 
 ## Project Setup Guide
 
 ### Prerequisites
 
-Ensure you have the following installed on your machine:
+Ensure you have the following installed on your machine : 
 
 - Python (>= 3.8)
 - pip (latest version)
@@ -107,4 +107,4 @@ pip install <package_name>
 
 ### Contribution
 
-Feel free to reach out to us if you have any questions or suggestions.
+Feel free to reach out to us if you have any questions or suggestions .

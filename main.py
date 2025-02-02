@@ -5,7 +5,7 @@ import pytesseract
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
-# from langchain.embeddings import HuggingFaceInstructEmbeddings
+from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
@@ -87,7 +87,7 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversion_chain(vectorstore):
-    chat = ChatGroq(temperature=0.7, groq_api_key="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", model_name="llama-3.3-70b-versatile")
+    chat = ChatGroq(temperature=0.7, groq_api_key="your_groq_api_key", model_name="llama-3.3-70b-versatile")
 
     memory = ConversationBufferMemory(
         memory_key='chat_history',
@@ -121,7 +121,7 @@ def main():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
         
-    st.header("DocuChat - Open Source Document Assistant")
+    st.header("DocuChat - Assistant")
     
     user_question = st.text_input("Ask questions about your documents:")
     if user_question:

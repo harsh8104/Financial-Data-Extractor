@@ -2,6 +2,7 @@ import streamlit as st
 import getpass
 import os
 import pytesseract
+import base64
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
@@ -25,6 +26,23 @@ os.getenv("GOOGLE_API_KEY")
 # Define emojis/icons for user and document assistant
 user_icon = "👤"  # Emoji for user
 doc_icon = "📄"   # Emoji for document assistant
+
+def show_pdf(file_path):
+    try:
+        # Read file as bytes
+        bytes_data = file_path.getvalue()
+        
+        # Encode to base64
+        base64_pdf = base64.b64encode(bytes_data).decode('utf-8')
+        
+        # Embed PDF viewer
+        pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
+        
+        # Display in Streamlit
+        st.markdown(pdf_display, unsafe_allow_html=True)
+        
+    except Exception as e:
+        st.error(f"Error displaying PDF: {str(e)}")
 
 def convert_pdf_to_images(file_path, scale=300/72):
     pdf_file = pdfium.PdfDocument(file_path)  
@@ -77,13 +95,12 @@ def get_chunks(text):
     return chunks
 
 def get_vectorstore(text_chunks):
-    # Use HuggingFaceInstructEmbeddings without the 'token' argument
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vectorstore
 
 def get_conversion_chain(vectorstore):
-    chat = ChatGroq(temperature=0.7, groq_api_key="your_groq_api_key", model_name="llama-3.3-70b-versatile")
+    chat = ChatGroq(temperature=0.7, groq_api_key="your_api_key", model_name="llama-3.3-70b-versatile")
 
     memory = ConversationBufferMemory(
         memory_key='chat_history',
@@ -108,29 +125,54 @@ def handle_user_input(user_question):
         else:
             st.markdown(f"{doc_icon} **DocuChat:** {message.content}")
 
+def display_pdf(pdf_docs):
+    # Create tabs for each PDF
+    if pdf_docs:
+        pdf_tabs = st.tabs([f"PDF {i+1}: {pdf.name}" for i, pdf in enumerate(pdf_docs)])
+        
+        for i, tab in enumerate(pdf_tabs):
+            with tab:
+                pdf_display = pdf_docs[i]
+                
+                # Show PDF file details
+                st.write(f"Filename: {pdf_display.name}")
+                st.write(f"File size: {pdf_display.size/1024:.2f} KB")
+                
+                # Display the PDF using base64
+                show_pdf(pdf_display)
+
 def main():
     load_dotenv()
-    st.set_page_config(page_title="DocuChat", page_icon="📄")
+    st.set_page_config(page_title="DocuChat", page_icon="📄", layout="wide")
     
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
         
-    st.header("DocuChat - Assistant")
+    # Create two columns: one for chat and one for PDF preview
+    chat_col, preview_col = st.columns([2, 1])
     
-    user_question = st.text_input("Ask questions about your documents:")
-    submit_button = st.button("Submit")
-    
-    if submit_button and user_question:
-        handle_user_input(user_question)
+    with chat_col:
+        st.header("DocuChat - Assistant")
         
-    with st.sidebar:
-        st.subheader("Your Documents")
+        user_question = st.text_input("Ask questions about your documents:")
+        submit_button = st.button("Submit")
+        
+        if submit_button and user_question:
+            handle_user_input(user_question)
+    
+    with preview_col:
+        st.subheader("Document Preview")
         pdf_docs = st.file_uploader(
             "Upload PDF/DOCX files and click Process",
-            accept_multiple_files=True
+            accept_multiple_files=True,
+            type=['pdf']  # Added type restriction
         )
+        
+        # Display PDF preview
+        if pdf_docs:
+            display_pdf(pdf_docs)
     
         if st.button("Process"):
             with st.spinner("Processing documents..."):
@@ -151,8 +193,10 @@ def main():
                         # Convert PDF to images
                         images.extend(convert_pdf_to_images(pdf_io))  
 
+                        # Reset file pointer for text extraction
+                        pdf.seek(0)
                         # Extract text from PDF
-                        raw_text += get_pdf_text([pdf_io])  # Pass as a list
+                        raw_text += get_pdf_text([pdf])
                     
                     # Extract text from images
                     image_text = convert_images_to_text(images)

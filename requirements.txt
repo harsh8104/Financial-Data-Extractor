@@ -8,3 +8,4 @@ faiss-cpu
 pypdfium2
 Pillow
 langchain_groq
+faiss

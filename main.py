@@ -5,17 +5,13 @@ import pytesseract
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
-# from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 import pypdfium2 as pdfium
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-import matplotlib.pyplot as plt
 from PIL import Image
 from io import BytesIO
-from langchain.chat_models import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 
 # Configure Tesseract path (Windows)
@@ -124,7 +120,9 @@ def main():
     st.header("DocuChat - Assistant")
     
     user_question = st.text_input("Ask questions about your documents:")
-    if user_question:
+    submit_button = st.button("Submit")
+    
+    if submit_button and user_question:
         handle_user_input(user_question)
         
     with st.sidebar:
